@@ -18,6 +18,8 @@ class _TaskManagerState extends State<TaskManager> {
     });
   }
 
+
+  //add task
   Future<void> _addTask(String title) async {
     if (title.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -30,11 +32,14 @@ class _TaskManagerState extends State<TaskManager> {
     _fetchTasks();
   }
 
+
+  //mark as completed  or not
   Future<void> _toggleTask(int id, int isCompleted) async {
     await DBHelper().updateTask(id, isCompleted);
     _fetchTasks();
   }
 
+  //need to confirm delete=ing before actualy delete it
   Future<void> _confirmDeleteTask(int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -95,14 +100,14 @@ class _TaskManagerState extends State<TaskManager> {
           Expanded(
             child: _tasks.isEmpty
                 ? const Center(child: Text('No tasks added yet.'))
-                : ListView.builder(
+                : ListView.builder(   //display the list
                     itemCount: _tasks.length,
                     itemBuilder: (context, index) {
                       final task = _tasks[index];
                       return Dismissible(
                         key: Key(task['id'].toString()),
                         direction: DismissDirection.startToEnd,
-                        confirmDismiss: (_) => _confirmDeleteTask(task['id']),
+                        confirmDismiss: (_) => _confirmDeleteTask(task['id']),// to delete from the display list
                         background: Container(
                           color: Colors.red,
                           alignment: Alignment.centerLeft,
@@ -110,7 +115,7 @@ class _TaskManagerState extends State<TaskManager> {
                           child: const Icon(Icons.delete, color: Colors.white),
                         ),
                         child: ListTile(
-                          leading: Checkbox(
+                          leading: Checkbox(  // to mark as completed or not 
                             value: task['isCompleted'] == 1,
                             onChanged: (val) => _toggleTask(
                                 task['id'], val! ? 1 : 0),
